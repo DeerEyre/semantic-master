@@ -402,11 +402,12 @@ if __name__ == '__main__':
     search_beam_size = 3
 
     eos_id = 0
-    sos_id = sos_word_id
 
     print("加载模型中...")
     unilm_model, tokenizer, bi_uni_pipeline, device, mask_word_id, eos_word_ids, sos_word_id = load_model()
     print("加载模型完成")
+
+    sos_id = sos_word_id
 
     KG = Trie()
     print("加载数据中...")
