@@ -44,7 +44,7 @@ def read_model():
     torch.cuda.empty_cache()
     model.eval()
 
-    return model, tokenizer_, bi_uni_pipeline_, device_
+    return model, tokenizer_, bi_uni_pipeline_, device_, mask_word_id, eos_word_ids, sos_word_id
 
 
 def detokenize(tk_list):
@@ -405,7 +405,7 @@ if __name__ == '__main__':
     sos_id = sos_word_id
 
     print("加载模型中...")
-    unilm_model, tokenizer, bi_uni_pipeline, device = load_model()
+    unilm_model, tokenizer, bi_uni_pipeline, device, mask_word_id, eos_word_ids, sos_word_id = load_model()
     print("加载模型完成")
 
     KG = Trie()
