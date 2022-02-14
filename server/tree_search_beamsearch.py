@@ -392,6 +392,23 @@ def tree_search_out(text, model, device_):
     return {"entity": entity, "attributes": attributes, "score": beam_score, "code": 1}
 
 
+min_len = 1
+length_penalty = 2
+search_beam_size = 3
+
+eos_id = 0
+
+logger_trid.info("加载模型中...")
+unilm_model, tokenizer, bi_uni_pipeline, device, mask_word_id, eos_word_ids, sos_word_id = read_model()
+logger_trid.info("加载模型完成")
+
+sos_id = sos_word_id
+
+KG = Trie()
+logger_trid.info("加载数据中...")
+KG.load(trie_path)
+logger_trid.info("加载数据完成")
+
 app = Sanic(__name__)
 
 
@@ -418,21 +435,4 @@ async def reductions(request):
 
 
 if __name__ == '__main__':
-    min_len = 1
-    length_penalty = 2
-    search_beam_size = 3
-
-    eos_id = 0
-
-    logger_trid.info("加载模型中...")
-    unilm_model, tokenizer, bi_uni_pipeline, device, mask_word_id, eos_word_ids, sos_word_id = read_model()
-    logger_trid.info("加载模型完成")
-
-    sos_id = sos_word_id
-
-    KG = Trie()
-    logger_trid.info("加载数据中...")
-    KG.load(trie_path)
-    logger_trid.info("加载数据完成")
-
     app.run(host="0.0.0.0", port=33366, workers=1)
