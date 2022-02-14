@@ -3,7 +3,7 @@ model_path = "/ai-model/search_model/model.10.bin"
 tokenizer_path = "/ai-model/search_model/vocab.txt"
 trie_path = "/ai-model/trie_data/KG_v1.2.json"
 
-cuda = "cuda:5"
+cuda = "cuda:0"
 pos_tag = {'n': '▂',
            'mq': '▃',
            'ul': '▅',

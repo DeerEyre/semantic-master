@@ -1,19 +1,37 @@
+import logging
+import logging.handlers
+
 import torch
-from utils import utils_seq2seq
-import requests
-import argparse
-import json
 import requests
 import numpy as np
 import jieba.posseg as pseg
 import math
 from torch import nn
 from config.project_config import *
-
+from utils import utils_seq2seq
+from model.trie_model import Trie
 from model.tokenization_unilm import UnilmTokenizer
 from model.modeling_unilm import UnilmForSeq2SeqDecode, UnilmConfig
 from sanic import Sanic
 from sanic.response import json as sanic_json
+
+
+formatter = logging.Formatter(fmt='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                              datefmt='%Y-%m-%d %H:%M:%S')
+rf_handler = logging.handlers.TimedRotatingFileHandler(filename="logs/beam_search.log", when='D', interval=7,
+                                                       backupCount=60)
+
+logger_trid = logging.getLogger("beam_search")
+logger_trid.setLevel(logging.INFO)
+
+ch = logging.StreamHandler()
+ch.setFormatter(formatter)
+rf_handler.setFormatter(formatter)
+
+logger_trid.addHandler(ch)
+logger_trid.addHandler(rf_handler)
+
+logger_trid.info("start")
 
 
 def read_model():
@@ -21,7 +39,7 @@ def read_model():
     config = UnilmConfig.from_pretrained(model_config_path, max_position_embeddings=512)
     tokenizer_ = UnilmTokenizer.from_pretrained(tokenizer_path)
 
-    mask_word_id, eos_word_ids, sos_word_id = tokenizer_.convert_tokens_to_ids(["[MASK]", "[SEP]", "[S2S_SOS]"])
+    mask_word_id_, eos_word_ids_, sos_word_id_ = tokenizer_.convert_tokens_to_ids(["[MASK]", "[SEP]", "[S2S_SOS]"])
 
     bi_uni_pipeline_ = list()
     bi_uni_pipeline_.append(utils_seq2seq.Preprocess4Seq2seqDecode(list(tokenizer_.vocab.keys()),
@@ -30,11 +48,11 @@ def read_model():
     model_recover = torch.load(model_path)
     model = UnilmForSeq2SeqDecode.from_pretrained(model_path, state_dict=model_recover,
                                                   config=config,
-                                                  mask_word_id=mask_word_id,
+                                                  mask_word_id=mask_word_id_,
                                                   search_beam_size=4,
                                                   length_penalty=2,
-                                                  eos_id=eos_word_ids,
-                                                  sos_id=sos_word_id,
+                                                  eos_id=eos_word_ids_,
+                                                  sos_id=sos_word_id_,
                                                   ngram_size=3)
 
     del model_recover
@@ -44,7 +62,7 @@ def read_model():
     torch.cuda.empty_cache()
     model.eval()
 
-    return model, tokenizer_, bi_uni_pipeline_, device_, mask_word_id, eos_word_ids, sos_word_id
+    return model, tokenizer_, bi_uni_pipeline_, device_, mask_word_id_, eos_word_ids_, sos_word_id_
 
 
 def detokenize(tk_list):
@@ -380,18 +398,21 @@ app = Sanic(__name__)
 @app.route("/tree", methods=['POST'])
 async def reductions(request):
     jsonDic = request.json
-    print("输入： %s" % jsonDic)
+    logger_trid.info("输入： %s" % jsonDic)
 
     try:
         text = jsonDic["text"]
-
     except Exception as ex:
-        print(ex)
+        logger_trid.error(ex)
         return sanic_json({"error": "输入错误", "code": -1})
 
-    output_json = tree_search_out(text, unilm_model, device)
+    try:
+        output_json = tree_search_out(text, unilm_model, device)
+    except Exception as ex:
+        output_json = {"entity": text, "attributes": "", "score": 0, "code": 1}
+        logger_trid.error(ex)
 
-    print("输出： %s" % output_json)
+    torch.cuda.empty_cache()
 
     return sanic_json(output_json)
 
@@ -403,20 +424,15 @@ if __name__ == '__main__':
 
     eos_id = 0
 
-    print("加载模型中...")
-    unilm_model, tokenizer, bi_uni_pipeline, device, mask_word_id, eos_word_ids, sos_word_id = load_model()
-    print("加载模型完成")
+    logger_trid.info("加载模型中...")
+    unilm_model, tokenizer, bi_uni_pipeline, device, mask_word_id, eos_word_ids, sos_word_id = read_model()
+    logger_trid.info("加载模型完成")
 
     sos_id = sos_word_id
 
     KG = Trie()
-    print("加载数据中...")
+    logger_trid.info("加载数据中...")
     KG.load(trie_path)
-    print("加载数据完成")
+    logger_trid.info("加载数据完成")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--port', default=33366, type=int, help='服务端口')
-
-    sh_args = parser.parse_args()
-
-    app.run(host="0.0.0.0", port=sh_args.port, workers=1)
+    app.run(host="0.0.0.0", port=33366, workers=1)

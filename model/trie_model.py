@@ -1,3 +1,5 @@
+import json
+
 
 class Trie(object):
     """自定义Trie树对象，用来保存知识库
