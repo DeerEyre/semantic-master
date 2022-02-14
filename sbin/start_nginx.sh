@@ -1,1 +1,1 @@
-nginx -c /data/repetition_reducer_zh_unilm/config/ngconf/nginx.conf &
+nginx -c /data/semantic-search/config/ngconf/nginx.conf &
