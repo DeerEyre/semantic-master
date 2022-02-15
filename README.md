@@ -1,42 +1,24 @@
-<<<<<<< HEAD
 # 语义搜索
 
-#### 介绍
-结合问答与es搜索, 可以识别一定的用户意图
-
-#### 软件架构
-软件架构说明
-
-
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+## 部署步骤
+1. 拉取镜像
+2. 启动docker容器
+3. 进入docker内的/data目录,拉取本项目代码
+4. 进入本项目，执行命令：
+    ```
+    bash sbin/start_nginx.sh # 启动nginx
+    bash sbin/start_search.sh # 启动前缀树与聚合搜索
+    ```
+   
+## 其他配置
+nginx配置文件：semantic-search/config/ngconf/nginx.conf
+gunicorn配置文件(路径)：semantic-search/sbin/start_search.sh
+gpu选择、模型数据路径： semant-search/config/project_config.py
 
 
-#### 特技
+## 项目的主要逻辑
+主要组件
+![image text](images/img-1.png)
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
-=======
-# docker 启动
-```docker run -d -p 80:80 -p 443:443 --name nginx-proxy nginx-proxy``` 
->>>>>>> 聚合搜索代码初次提交
+主要流程
+![image text](images/img-2.png)

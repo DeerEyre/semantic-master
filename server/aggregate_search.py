@@ -29,6 +29,8 @@ logger_aggregate.info("start")
 
 
 def sentence_classification(sentence, max_length=32):
+    """输入句子的简单匹配"""
+
     sentence = sentence.replace("\n", "").replace(" ", "")
     if len(sentence) > max_length:
         return "fulltext_search"
@@ -44,10 +46,12 @@ def sentence_classification(sentence, max_length=32):
 
 
 def fuzzy_search_main(word, word_one, top):
+    """模糊匹配"""
     return process.extract(word, word_one, limit=top)
 
 
 def score_search(search_result, text_input):
+    """根据模糊匹配对搜索结果进行评分"""
     new_search_text = {text_input: {}}
 
     for key, values in search_result[text_input].items():
@@ -69,6 +73,8 @@ def score_search(search_result, text_input):
 
 
 def containment_relationship(search_result, text_input):
+    """寻找包含关系的标签"""
+
     nodes = [k for k, v in search_result[text_input].items()]
 
     abbreviation = {'研究现状': '现状',
@@ -94,6 +100,8 @@ def containment_relationship(search_result, text_input):
 
 
 def search_abbreviation(search_result, text_input, attributes):
+    """合并包含关系的标签"""
+
     abbreviation = containment_relationship(search_result, text_input)
     new_search_result = {}
     if attributes in abbreviation:
@@ -118,6 +126,7 @@ def search_abbreviation(search_result, text_input, attributes):
 
 
 def sort_nodes(search_result, text_input, attributes):
+    """属性排序"""
     nodes_score = {}
 
     for k, v in search_result[text_input].items():
@@ -135,6 +144,7 @@ def sort_nodes(search_result, text_input, attributes):
 
 
 def get(word, attr, size=100):
+    """根据词语和属性搜索"""
     url = "http://fulltext-search.k8s.laibokeji.com/search/enrityInfo/fulltext_v3?q=%s&size=%s&attr=%s" % (
         word, size, attr)
     response = requests.request("GET", url)
@@ -146,6 +156,7 @@ def get(word, attr, size=100):
 
 
 def post(text, timeout=30):
+    """前缀树搜索"""
     url = "http://192.168.6.246:33366/tree"
 
     headers = {
@@ -161,6 +172,7 @@ def post(text, timeout=30):
 
 
 def search(text, num=10, version="fulltext_v3"):
+    """片段搜索接口"""
     url = "http://fulltext-search.k8s.laibokeji.com/search/fulltext/%s?q=%s&size=%s" % (version, quote(text), num)
 
     result = requests.request("GET", url)

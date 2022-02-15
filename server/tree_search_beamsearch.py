@@ -35,6 +35,7 @@ logger_trid.info("start")
 
 
 def read_model():
+    """读取模型及相关配置"""
 
     config = UnilmConfig.from_pretrained(model_config_path, max_position_embeddings=512)
     tokenizer_ = UnilmTokenizer.from_pretrained(tokenizer_path)
@@ -66,6 +67,7 @@ def read_model():
 
 
 def detokenize(tk_list):
+    """去除##"""
     r_list = []
     for tk in tk_list:
         if tk.startswith('##') and len(r_list) > 0:
@@ -76,6 +78,7 @@ def detokenize(tk_list):
 
 
 def search_pos(text):
+    """搜索语句拼接词性，构建模型输入"""
     new_pos = []
     for word, pos in pseg.lcut(text):
         word_token = tokenizer.tokenize(word)
@@ -89,6 +92,7 @@ def search_pos(text):
 
 
 def score_percentage(score):
+    """置信度转化为百分比"""
     score = score if score > 3 else 3
     score = score if score < 10 else 10
 
@@ -98,6 +102,7 @@ def score_percentage(score):
 
 
 def first_expand(x, K):
+    """第一次预测饿拼接"""
     input_shape = list(x.size())
     expanded_shape = input_shape[:1] + [1] + input_shape[1:]
     x = torch.reshape(x, expanded_shape)
@@ -108,6 +113,7 @@ def first_expand(x, K):
 
 
 def select_beam_items(x, ids, K, batch_size):
+    """beam search输出选择"""
     ids = ids.long()
     id_shape = list(ids.size())
     id_rank = len(id_shape)
@@ -126,6 +132,7 @@ def select_beam_items(x, ids, K, batch_size):
 
 
 def text_en_word(text):
+    """英文分词"""
     en_token = []
     for word, pos in pseg.lcut(text):
         if pos == "eng":
@@ -136,6 +143,7 @@ def text_en_word(text):
 
 
 def generate_step(model, input_ids, token_type_ids, position_ids, attention_mask, en_token):
+    """预测步骤, 包括beam search"""
     input_shape = list(input_ids.size())
     batch_size = input_shape[0]
     input_length = input_shape[1]
@@ -340,6 +348,7 @@ def generate_step(model, input_ids, token_type_ids, position_ids, attention_mask
 
 
 def outputs(output_ids, buf):
+    """模型输出的解码结果"""
     output_sequence = []
     for i in range(len(buf)):
         w_ids = output_ids[i]
@@ -359,6 +368,8 @@ def outputs(output_ids, buf):
 
 
 def generate_all(model, titles, device_):
+    """模型输入的组装"""
+
     en_token = text_en_word(titles[0])
     titles = [search_pos(titles[0])]
 
@@ -385,6 +396,7 @@ def generate_all(model, titles, device_):
 
 
 def tree_search_out(text, model, device_):
+    """返回搜索的实体与属性"""
 
     output_text, beam_score = generate_all(model, [text], device_)
     entity, attributes = output_text.split("[SEP]")
