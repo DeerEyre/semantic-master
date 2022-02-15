@@ -3,7 +3,14 @@
 ## 部署步骤
 1. 拉取镜像
 2. 启动docker容器
+   ```
+   docker run --gpus all --shm-size 4g --name semantic-search --net host -it -v [共享目录]:/data ai_write_outline_tree:3090_base bash
+   ```
 3. 进入docker内的/data目录,拉取本项目代码
+   ```
+   cd /data
+   git clone https://gitee.com/whLaibo/semantic-search.git
+   ```
 4. 进入本项目，执行命令：
     ```
     bash sbin/start_nginx.sh # 启动nginx
