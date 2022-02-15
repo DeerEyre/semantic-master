@@ -17,8 +17,8 @@ gpu选择、模型数据路径： semant-search/config/project_config.py
 
 
 ## 项目的主要逻辑
-主要组件
+### 主要组件
 ![image text](images/img-1.png)
 
-主要流程
+### 主要流程
 ![image text](images/img-2.png)
