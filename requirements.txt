@@ -1,0 +1,9 @@
+jieba==0.42.1
+numpy==1.18.5
+pytorch_transformers==1.1.0
+requests==2.27.1
+sanic==20.6.3
+thefuzz==0.19.0
+torch==1.7.1+cu110
+tqdm==4.62.3
+transformers==3.0.2

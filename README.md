@@ -2,9 +2,12 @@
 
 ## 部署步骤
 1. 拉取镜像
-2. 启动docker容器
+    ```
+    docker pull harbor.laibokeji.com/aiserver/semantic-search-and-keyword:v1.0
+    ```
+2. 启动docker容器 (默认进入容器，第一次退出会自动停止运行)
    ```
-   docker run --gpus all --shm-size 4g --name semantic-search --net host -it -v [共享目录]:/data ai_write_outline_tree:3090_base bash
+   docker run --gpus all --shm-size 4g --name semantic-search --net host -it -v [共享目录]:/data harbor.laibokeji.com/aiserver/semantic-search-and-keyword:v1.0 bash
    ```
 3. 进入docker内的/data目录,拉取本项目代码
    ```
@@ -18,9 +21,9 @@
     ```
    
 ## 其他配置
-nginx配置文件：semantic-search/config/ngconf/nginx.conf
-gunicorn配置文件(路径)：semantic-search/sbin/start_search.sh
-gpu选择、模型数据路径： semant-search/config/project_config.py
+   nginx配置文件：semantic-search/config/ngconf/nginx.conf
+   gunicorn配置文件(路径)：semantic-search/sbin/start_search.sh
+   gpu选择、模型数据路径： semant-search/config/project_config.py
 
 
 ## 项目的主要逻辑
