@@ -157,7 +157,7 @@ def get(word, attr, size=100):
 
 def post(text, timeout=30):
     """前缀树搜索"""
-    url = "http://192.168.6.246:33366/tree"
+    url = "http://127.0.0.1:33366/tree"
 
     headers = {
         'Content-Type': 'application/json'
