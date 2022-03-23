@@ -171,7 +171,7 @@ def post(text, timeout=30):
     return response
 
 
-def search(text, num=10, version="fulltext_v3"):
+def search(text, num=10, version="fulltext_v1"):
     """片段搜索接口"""
     url = "http://fulltext-search.k8s.laibokeji.com/search/fulltext/%s?q=%s&size=%s" % (version, quote(text), num)
 
