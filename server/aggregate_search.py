@@ -145,7 +145,7 @@ def sort_nodes(search_result, text_input, attributes):
 
 def get(word, attr, size=100):
     """根据词语和属性搜索"""
-    url = "http://fulltext-search.k8s.laibokeji.com/search/enrityInfo/fulltext_v3?q=%s&size=%s&attr=%s" % (
+    url = "http://fulltext-search.k8s.laibokeji.com/search/enrityInfo/fulltext_v1?q=%s&size=%s&attr=%s" % (
         word, size, attr)
     response = requests.request("GET", url)
     try:
