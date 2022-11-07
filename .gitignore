@@ -7,3 +7,9 @@ __pycache__
 
 # log
 *.log
+test.py
+test2.py
+result.jsonl
+result22.jsonl
+result3.jsonl
+result4.jsonl
