@@ -1,9 +1,11 @@
-model_config_path = "/ai-model/search_model/config.json"
-model_path = "/ai-model/search_model/model.10.bin"
-tokenizer_path = "/ai-model/search_model/vocab.txt"
-trie_path = "/ai-model/trie_data/KG_v1.2.json"
+model_config_path = "ai-model/checkpoint/ckpt-10000/config.json"
+model_path = "ai-model/checkpoint/ckpt-10000/pytorch_model.bin"
+#model_config_path = 'ai-model/search_model/config.json'
+#model_path = 'ai-model/search_model/model.10.bin'
+tokenizer_path = "ai-model/search_model/vocab.txt"
+trie_path = "ai-model/trie_data/kg_11_17.pkl"
 
-cuda = "cuda:0"
+cuda = "cpu"
 pos_tag = {'n': '▂',
            'mq': '▃',
            'ul': '▅',

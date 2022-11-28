@@ -1,5 +1,5 @@
+import pickle
 import json
-
 
 class Trie(object):
     """自定义Trie树对象，用来保存知识库
@@ -62,6 +62,12 @@ class Trie(object):
             else:
                 results.extend([[k] + j for j in self.keys(None, data[k])])
         return [prefix + i for i in results]
+    
+    def save_pickle(self, filename):
+        pickle.dump(self.data, open(filename, "wb"))
+        
+    def load_pickle(self, filename):
+        self.data = pickle.load(open(filename, "rb"))       
 
     def save(self, filename):
         with open(filename, 'w') as f:
@@ -70,3 +76,4 @@ class Trie(object):
     def load(self, filename):
         with open(filename) as f:
             self.data = json.load(f)
+
